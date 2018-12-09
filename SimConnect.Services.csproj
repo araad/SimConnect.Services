@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ReferencePath>$(SIMCON_ASSEMBLY_FOLDER)</ReferencePath>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F89BD890-9EEF-4D26-B923-CD6CBEC2EF35}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SIM.Connect</RootNamespace>
+    <AssemblyName>SimConnect.Services</AssemblyName>
+    <ProjectTypeGuids>{3D9AD99F-2412-4246-B90B-4EAA41C64699};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <StartArguments>/client:"WcfTestClient.exe"</StartArguments>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="SimConnect.Core" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Aircraft\AircraftProviderService.cs" />
+    <Compile Include="Aircraft\ElectricalSystems\ElectricalSystemsProviderService.cs" />
+    <Compile Include="Aircraft\FlightInstrumentations\FlightInstrumentationProviderService.cs" />
+    <Compile Include="Aircraft\Fuel\FuelProviderService.cs" />
+    <Compile Include="Aircraft\PositionSpeed\PositionSpeedProviderService.cs" />
+    <Compile Include="CallbackChannelManager.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Simconnect\SimconnectProviderService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SimConnect.ServiceContracts\SimConnect.ServiceContracts.csproj">
+      <Project>{553F8D91-D59A-4A21-9A95-D830313DBE8B}</Project>
+      <Name>SimConnect.ServiceContracts</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{3D9AD99F-2412-4246-B90B-4EAA41C64699}">
+        <WcfProjectProperties>
+          <AutoStart>False</AutoStart>
+        </WcfProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <PropertyGroup>
+    <PostBuildEvent>
+      REM Copy dll to Assembly Folder
+      xcopy /y $(TargetPath) $(SIMCON_ASSEMBLY_FOLDER)
+
+      REM If runtime directory doesnt exist, create it
+      IF NOT EXIST $(SIMCON_RUNTIME_FOLDER)\$(ConfigurationName) (
+      mkdir $(SIMCON_RUNTIME_FOLDER)\$(ConfigurationName)
+      )
+
+      REM copy dll to runtime folder
+      xcopy /y $(TargetPath) $(SIMCON_RUNTIME_FOLDER)\$(ConfigurationName)\
+
+      REM If debug, then copy pdb to runtime folder
+      IF "$(ConfigurationName)" == "Debug" (
+      xcopy /y $(TargetDir)$(TargetName).pdb $(SIMCON_RUNTIME_FOLDER)\$(ConfigurationName)\
+      )
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
