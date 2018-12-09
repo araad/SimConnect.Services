@@ -1,4 +1,4 @@
-# SimConnect.Core
+# SimConnect.Services
 Library that contains service implementation part of an FSX add-on server using SimConnect SDK
 
 Set the following environment variables:
